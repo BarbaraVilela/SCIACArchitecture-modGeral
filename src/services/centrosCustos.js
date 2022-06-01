@@ -25,7 +25,7 @@ class CentrosCustosServices {
 
                     //Atualiza cada registro, conforme dado recebido
                     response.data.forEach(element => {
-                        atualizaElementoEstrutura(element);
+                        this.atualizaElementoEstrutura(element);
                     });
 
                     return getAll();
