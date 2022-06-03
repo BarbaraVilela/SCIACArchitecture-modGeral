@@ -10,7 +10,7 @@ const database = [
         id: 2,
         nome: "Secretaria Municipal de Educação Antiga",
         sigla: "SMEA",
-        idUnidadeOrganizacional: 4567
+        idUnidadeOrganizacional: 1234
     },
     {
         id: 3,

@@ -1,6 +1,4 @@
-const CentrosCustosServices = require('../services/centrosCustos');
-
-const centrosCustosServices = new CentrosCustosServices();
+const centrosCustosServices = require('../services/centrosCustos');
 
 class CentrosCustosController {
 

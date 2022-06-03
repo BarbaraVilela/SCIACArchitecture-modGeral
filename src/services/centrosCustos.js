@@ -1,49 +1,75 @@
 const axios = require('axios').default;
-const CentrosCustosRepository = require('../repositories/centrosCustos');
+const centrosCustosRepository = require('../repositories/centrosCustos');
 
-const centrosCustosRepository = new CentrosCustosRepository();
+function getAll() {
+    return centrosCustosRepository.getAll();
+};
 
-class CentrosCustosServices {
+/*
+Responsável por buscar os dados da estrutura organizacional no serviço disponibilizado pelo Sistema de Estrutura Organizacional
+e atualizar os dados de Centros de Custos contidos na base"
+*/
+function updateAll() {
+    //Busca os dados na API Fake construída para simular o serviço disponibilizado pelo Sistema de Estrutura Organizacional
+    //        var url = 'https://sciac-api-fake.azurewebsites.net';
+    var url = 'http://localhost:8910';
 
-    getAll() {
-        return centrosCustosRepository.getAll();
-    };
+    axios.get(url, { proxy: false })
+        .then(function (response) {
 
-    /*
-    Responsável por buscar os dados da estrutura organizacional no serviço disponibilizado pelo Sistema de Estrutura Organizacional
-    e atualizar os dados de Centros de Custos contidos na base"
-    */
-    updateAll() {
-        //Busca os dados na API Fake construída para simular o serviço disponibilizado pelo Sistema de Estrutura Organizacional
-        var url = "https://sciac-api-fake.azurewebsites.net/";
+            //Verifica o status da resposta
+            if (response.status == 200) {
 
-        axios.get(url)
-            .then(function (response) {
+                //Atualiza cada registro, conforme dado recebido
+                response.data.forEach(elemento => {
+                    atualizaElementoEstrutura(elemento);
+                });
 
-                //Verifica o status da resposta
-                if (response.status == 200) {
+                return 'Finalmente passamos por mais um bizil';
 
-                    //Atualiza cada registro, conforme dado recebido
-                    response.data.forEach(element => {
-                        this.atualizaElementoEstrutura(element);
-                    });
+            } else
+                console.log(response.status + ': ' + response.data)
+            return 'Erro: Não foi possível conectar-se ao sistema de origem dos dados';
 
-                    return getAll();
+        }).catch(function (error) {
+            // handle error
+            console.log(error);
+            return 'Erro: Não foi possível conectar-se ao sistema de origem dos dados';
+        });
+};
 
-                } else
-                    return 'error: Não foi possível conectar-se ao sistema de origem dos dados';
+function atualizaElementoEstrutura(elemento) {
+    console.log("Atualizando...");
+    console.log(elemento);
 
-            }).catch(function (error) {
-                // handle error
-                console.log(error);
-                return 'error: ' + error.message;
-            });
-    };
+    //Encontra o elemento na base
+    let centroCusto = centrosCustosRepository.getByIdUnidadeOrg(elemento.idUnidadeOrganizacional);
+    console.log(centroCusto);
 
-    atualizaElementoEstrutura(elemento) {
-        console.log(elemento.nome);
-    };
+    //Se o centro de custo já existe na base, atualiza-o:
+    if (centroCusto) {
+        centroCusto.nome = elemento.nomeUnidadeOrgacional;
+        centroCusto.sigla = elemento.siglaUnidadeOrganizacional;
 
-}
+        console.log(centroCusto);
+        centrosCustosRepository.update(centroCusto);
 
-module.exports = CentrosCustosServices;
+        //Caso contrário, cria-o:
+    } else {
+        console.log("Cria um novo centro de custo");
+        const centroCustoNovo = {
+            id: undefined,
+            nome: elemento.nomeUnidadeOrgacional,
+            sigla: elemento.siglaUnidadeOrganizacional,
+            idUnidadeOrganizacional: elemento.idUnidadeOrganizacional
+        }
+
+        centrosCustosRepository.add(centroCustoNovo);
+        console.log(centroCustoNovo);
+    }
+};
+
+module.exports = {
+    getAll,
+    updateAll
+};
