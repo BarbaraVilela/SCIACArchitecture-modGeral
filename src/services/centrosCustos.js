@@ -19,13 +19,14 @@ console.log(process.env.urlAPIEstruturaOrg ? "Encontrada informação de url con
 
     axios.get(url)
         .then(function (response) {
-            //console.log("Acesso ao url da Estrutura Organizacional realizado com sucesso...");
+            console.log("Acesso ao url da Estrutura Organizacional realizado com sucesso...");
 
             //Verifica o status da resposta
             if (response.status == 200) {
                 //Atualiza cada registro, conforme dado recebido
                 console.log("Inicia a atualização dos dados de centros de custos");
                 response.data.forEach(elemento => {
+                    console.log("Elemento 1: " + elemento.nomeUnidadeOrgacional)
                     atualizaElementoEstrutura(elemento);
                 });
 
