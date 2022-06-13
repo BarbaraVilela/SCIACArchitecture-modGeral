@@ -13,28 +13,30 @@ e atualizar os dados de Centros de Custos contidos na base"
 */
 function updateAll() {
     //Busca os dados na API Fake construída para simular o serviço disponibilizado pelo Sistema de Estrutura Organizacional
-//    var url = 'https://sciac-api-fake.azurewebsites.net';
-var url = process.env.urlAPIEstruturaOrg;
 
+var url = process.env.urlAPIEstruturaOrg || 'https://sciac-api-fake.azurewebsites.net';
+console.log(process.env.urlAPIEstruturaOrg ? "Encontrada informação de url configurada no ambiente" : "Configuração de url não encontrada no ambiente");
 
     axios.get(url)
         .then(function (response) {
+            //console.log("Acesso ao url da Estrutura Organizacional realizado com sucesso...");
 
             //Verifica o status da resposta
             if (response.status == 200) {
                 //Atualiza cada registro, conforme dado recebido
+                console.log("Inicia a atualização dos dados de centros de custos");
                 response.data.forEach(elemento => {
                     atualizaElementoEstrutura(elemento);
                 });
 
             } else
-                console.log(response.status + ': ' + response.data)
-            throw error;
+            throw new Error("Erro ao acessar o serviço da Estrutura Organizacional. Status code inesperado: " + response.status)
 
         }).catch(function (error) {
             // handle error
             console.log(error);
-            throw error;
+            console.log("Erro ao conectar-se ao serviço da Estrutura Organizacional");
+            throw new Error("Erro ao conectar-se ao serviço da Estrutura Organizacional" + error.message);
         });
 };
 
