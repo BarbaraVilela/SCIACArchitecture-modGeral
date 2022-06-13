@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const axios = require('axios').default;
 const centrosCustosRepository = require('../repositories/centrosCustos');
 
@@ -11,7 +13,9 @@ e atualizar os dados de Centros de Custos contidos na base"
 */
 function updateAll() {
     //Busca os dados na API Fake construída para simular o serviço disponibilizado pelo Sistema de Estrutura Organizacional
-    var url = 'https://sciac-api-fake.azurewebsites.net';
+//    var url = 'https://sciac-api-fake.azurewebsites.net';
+var url = process.env.urlAPIEstruturaOrg;
+
 
     axios.get(url)
         .then(function (response) {
